@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Icon from '../../../components/AppIcon';
+import Icon from '../../../components/ui/AppIcon';
 import Button from '../../../components/ui/Button';
 import Select from '../../../components/ui/Select';
 import type { FilterSidebarProps } from '../types';

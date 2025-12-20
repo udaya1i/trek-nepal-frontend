@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
-import Header from "../../components/Header";
-import Breadcrumb from "../../components/Breadcrumb";
+import Header from "../../components/common/Header";
+import Breadcrumb from "../../components/ui/Breadcrumb";
 import OverviewTab from "./components/OverviewTab";
 import RouteMapTab from "./components/RouteMapTab";
 import ItineraryTab from "./components/ItineraryTab";
@@ -9,7 +9,7 @@ import HotelsTab from "./components/HotelsTab";
 import ReviewsTab from "./components/ReviewsTab";
 import SafetyTab from "./components/SafetyTab";
 import Sidebar from "./components/Sidebar";
-import Icon from "../../components/AppIcon";
+import Icon from "../../components/ui/AppIcon";
 import { Trek, TabType } from "./types";
 import ImageCarousel from "./components/ImageCarousel";
 

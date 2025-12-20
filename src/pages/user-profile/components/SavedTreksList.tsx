@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Image from '../../../components/AppImage';
-import Icon from '../../../components/AppIcon';
+import Image from '../../../components/ui/AppImage';
+import Icon from '../../../components/ui/AppIcon';
 import Button from '../../../components/ui/Button';
 import { SavedTrek } from '../types';
 

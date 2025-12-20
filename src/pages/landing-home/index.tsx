@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet';
-import Header from '../../components/Header';
+import Header from '../../components/common/Header';
 
 import HeroSection from './components/HeroSection';
 import FeaturedTreks from './components/FeaturedTreks';

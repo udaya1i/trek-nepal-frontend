@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import Header from '../../components/Header';
-import Breadcrumb from '../../components/Breadcrumb';
-import Icon from '../../components/AppIcon';
+// import Header from '../../components/ui/Header';
+import Breadcrumb from '../../components/ui/Breadcrumb';
+import Icon from '../../components/ui/AppIcon';
 import Button from '../../components/ui/Button';
 import type { Story, FilterOptions } from './types';
 import SearchBar from './components/SearchBar';
@@ -11,6 +11,7 @@ import FeaturedStory from './components/FeaturedStory';
 import FilterSidebar from './components/FilterSidebar';
 import SkeletonCard from './components/SkeletonCard';
 import StoryCard from './components/StoryCard';
+import Header from 'components/common/Header';
 
 const StoryFeedCommunity = () => {
   const [stories, setStories] = useState<Story[]>([]);
@@ -347,7 +348,7 @@ const StoryFeedCommunity = () => {
 
       <div className="min-h-screen bg-background">
         <Header
-          isAuthenticated={true}
+          // isAuthenticated={true}
           userName="John Doe"
           userAvatar="https://randomuser.me/api/portraits/men/1.jpg"
           onLogout={() => {}} />

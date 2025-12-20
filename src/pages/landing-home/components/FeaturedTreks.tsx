@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import Icon from '../../../components/AppIcon';
-import Image from '../../../components/AppImage';
+import Icon from '../../../components/ui/AppIcon';
+import Image from '../../../components/ui/AppImage';
 import Button from '../../../components/ui/Button';
 import { Trek } from '../types';
 

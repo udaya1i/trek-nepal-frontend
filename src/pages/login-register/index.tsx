@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
-import Header from "../../components/Header";
-import Breadcrumb from "../../components/Breadcrumb";
+// import Header from "../../components/ui/Header";
+import Breadcrumb from "../../components/ui/Breadcrumb";
 import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
 import SocialLogin from "./components/SocialLogin";
 import TrustSignals from "./components/TrustSignals";
 import GuestAccessBanner from "./components/GuestAccessBanner";
-import Image from "../../components/AppImage";
+import Image from "../../components/ui/AppImage";
+import Header from "components/common/Header";
 
 type AuthMode = "login" | "register";
 

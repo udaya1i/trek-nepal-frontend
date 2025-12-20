@@ -4,7 +4,7 @@ import Button from "../../../components/ui/Button";
 import Input from "../../../components/ui/Input";
 import { Checkbox } from "../../../components/ui/Checkbox";
 import Select from "../../../components/ui/Select";
-import Icon from "../../../components/AppIcon";
+import Icon from "../../../components/ui/AppIcon";
 import type { RegisterFormData, FormErrors, ExperienceLevel } from "../types";
 
 interface RegisterFormProps {

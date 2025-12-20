@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "../../../components/ui/Button";
 import Input from "../../../components/ui/Input";
 import { Checkbox } from "../../../components/ui/Checkbox";
-import Icon from "../../../components/AppIcon";
+import Icon from "../../../components/ui/AppIcon";
 import type { LoginFormData, FormErrors } from "../types";
 
 interface LoginFormProps {

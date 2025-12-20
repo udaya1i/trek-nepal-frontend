@@ -1,4 +1,4 @@
-import Icon from "../../../components/AppIcon";
+import Icon from "../../../components/ui/AppIcon";
 import { SafetyAlert, WeatherData } from "../types";
 
 interface SafetyTabProps {

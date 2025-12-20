@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Icon from '../../../components/AppIcon';
+import Icon from '../../../components/ui/AppIcon';
 
 import Button from '../../../components/ui/Button';
 import { SearchSuggestion } from '../types';

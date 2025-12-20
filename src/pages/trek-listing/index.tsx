@@ -1,8 +1,8 @@
 import { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet';
-import Header from '../../components/Header';
-import Breadcrumb from '../../components/Breadcrumb';
-import Icon from '../../components/AppIcon';
+import Header from '../../components/common/Header';
+import Breadcrumb from '../../components/ui/Breadcrumb';
+import Icon from '../../components/ui/AppIcon';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import Select from '../../components/ui/Select';

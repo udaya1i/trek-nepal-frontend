@@ -1,5 +1,5 @@
 import Button from "../../../components/ui/Button";
-import Icon from "../../../components/AppIcon";
+import Icon from "../../../components/ui/AppIcon";
 import type { SocialLoginProvider } from "../types";
 
 const SocialLogin = () => {

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import Header from '../../components/Header';
-import Breadcrumb from '../../components/Breadcrumb';
+import Header from '../../components/common/Header';
+import Breadcrumb from '../../components/ui/Breadcrumb';
 import ProfileHeader from './components/ProfileHeader';
 import StatsCard from './components/StatsCard';
 import BadgeGrid from './components/BadgeGrid';

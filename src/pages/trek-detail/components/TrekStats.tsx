@@ -1,4 +1,4 @@
-import Icon from "../../../components/AppIcon";
+import Icon from "../../../components/ui/AppIcon";
 import { TrekStats as TrekStatsType } from "../types";
 
 interface TrekStatsProps {
