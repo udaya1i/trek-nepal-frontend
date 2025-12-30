@@ -1,215 +1,248 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { TrekItinerary } from '../types';
+import Button from 'components/ui/Button';
+import { Edit, Plus, Trash2 } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from 'components/ui/Card';
 import Input from 'components/ui/Input';
-import { Button } from 'components/ui/Button';
-import { Checkbox } from 'components/ui/Checkbox';
-import { TrekFormData, ItineraryDay } from '../types';
-import { Calendar, Plus, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
-
+import Textarea from 'components/ui/Textarea';
 interface ItinerarySectionProps {
-  formData: TrekFormData;
-  onChange: (field: keyof TrekFormData, value: any) => void;
-  errors: Record<string, string>;
+  trekId: number;
+  itineraries: TrekItinerary[];
+  onChange: (itineraries: TrekItinerary[]) => void;
 }
 
-const ItinerarySection: React.FC<ItinerarySectionProps> = ({ formData, onChange, errors }) => {
-  const [expandedDays, setExpandedDays] = useState<Set<number>>(new Set([0]));
-  const [newDay, setNewDay] = useState<Partial<ItineraryDay>>({
-    title: '',
-    description: '',
-    distance: 0,
-    altitude: 0,
-    accommodationType: '',
-    meals: [],
+export const ItinerarySection = ({ trekId, itineraries, onChange }: ItinerarySectionProps) => {
+  const [isAdding, setIsAdding] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [formData, setFormData] = useState<Partial<TrekItinerary>>({
+    dayNumber: itineraries.length + 1,
+    startLocation: '',
+    endLocation: '',
+    durationHours: 0,
+    altitudeGain: 0,
+    altitudeLoss: 0,
+    trekShortDescription: '',
+    trekFullDescription: '',
+    temperature: '',
   });
 
-  const mealOptions = ['Breakfast', 'Lunch', 'Dinner'];
-
-  const toggleDay = (day: number) => {
-    const newExpanded = new Set(expandedDays);
-    if (newExpanded.has(day)) {
-      newExpanded.delete(day);
-    } else {
-      newExpanded.add(day);
-    }
-    setExpandedDays(newExpanded);
-  };
-
-  const handleAddDay = () => {
-    if (!newDay.title || !newDay.description) return;
-
-    const day: ItineraryDay = {
-      day: (formData.itinerary?.length || 0) + 1,
-      title: newDay.title || '',
-      description: newDay.description || '',
-      distance: newDay.distance || 0,
-      altitude: newDay.altitude || 0,
-      accommodationType: newDay.accommodationType || '',
-      meals: newDay.meals || [],
-    };
-
-    onChange('itinerary', [...(formData.itinerary || []), day]);
-    setNewDay({
-      title: '',
-      description: '',
-      distance: 0,
-      altitude: 0,
-      accommodationType: '',
-      meals: [],
+  const handleAdd = () => {
+    setIsAdding(true);
+    setEditingId(null);
+    setFormData({
+      dayNumber: itineraries.length + 1,
+      startLocation: '',
+      endLocation: '',
+      durationHours: 0,
+      altitudeGain: 0,
+      altitudeLoss: 0,
+      trekShortDescription: '',
+      trekFullDescription: '',
+      temperature: '',
     });
   };
 
-  const handleRemoveDay = (dayNumber: number) => {
-    const updatedItinerary = (formData.itinerary || [])
-      .filter(d => d.day !== dayNumber)
-      .map((d, index) => ({ ...d, day: index + 1 }));
-    onChange('itinerary', updatedItinerary);
+  const handleEdit = (itinerary: TrekItinerary) => {
+    setIsAdding(true);
+    setEditingId(itinerary.id);
+    setFormData(itinerary);
   };
 
-  const handleMealToggle = (meal: string) => {
-    const currentMeals = newDay.meals || [];
-    const updatedMeals = currentMeals.includes(meal)
-      ? currentMeals.filter(m => m !== meal)
-      : [...currentMeals, meal];
-    setNewDay({ ...newDay, meals: updatedMeals });
+  const handleSave = () => {
+    if (!formData.startLocation || !formData.endLocation || !formData.trekShortDescription || !formData.trekFullDescription) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    if (editingId) {
+      onChange(itineraries.map(i => i.id === editingId ? { ...formData, id: editingId, trek: trekId } as TrekItinerary : i));
+    } else {
+      const newItinerary: TrekItinerary = {
+        id: Date.now(),
+        trek: trekId,
+        dayNumber: formData.dayNumber || itineraries.length + 1,
+        startLocation: formData.startLocation || '',
+        endLocation: formData.endLocation || '',
+        durationHours: formData.durationHours || 0,
+        altitudeGain: formData.altitudeGain,
+        altitudeLoss: formData.altitudeLoss,
+        trekShortDescription: formData.trekShortDescription || '',
+        trekFullDescription: formData.trekFullDescription || '',
+        temperature: formData.temperature,
+      };
+      onChange([...itineraries, newItinerary]);
+    }
+    setIsAdding(false);
+    setEditingId(null);
+  };
+
+  const handleDelete = (id: number) => {
+    if (window.confirm('Are you sure you want to delete this itinerary day?')) {
+      onChange(itineraries.filter(i => i.id !== id));
+    }
+  };
+
+  const handleCancel = () => {
+    setIsAdding(false);
+    setEditingId(null);
   };
 
   return (
     <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-          <Calendar className="w-5 h-5 text-blue-600" />
-          Trek Itinerary
-        </h3>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-semibold text-gray-900">Trek Itinerary</h2>
+          <p className="text-sm text-gray-500 mt-1">Add daily trekking schedule and details</p>
+        </div>
+        {!isAdding && (
+          <Button onClick={handleAdd}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Day
+          </Button>
+        )}
+      </div>
 
-        {(formData.itinerary || []).length > 0 && (
-          <div className="mb-6 space-y-3">
-            {(formData.itinerary || []).map((day) => (
-              <div key={day.day} className="border border-gray-200 rounded-lg overflow-hidden">
-                <div
-                  className="flex items-center justify-between p-4 bg-gray-50 cursor-pointer hover:bg-gray-100"
-                  onClick={() => toggleDay(day.day)}
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-semibold text-blue-600">Day {day.day}</span>
-                    <span className="text-sm font-medium">{day.title}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRemoveDay(day.day);
-                      }}
-                    >
+      {isAdding && (
+        <Card>
+          <CardHeader>
+            <CardTitle>{editingId ? 'Edit Itinerary Day' : 'Add Itinerary Day'}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label="Day Number"
+                  type="number"
+                  value={formData.dayNumber}
+                  onChange={(e) => setFormData({ ...formData, dayNumber: parseInt(e.target.value) })}
+                  required
+                />
+                <Input
+                  label="Duration (Hours)"
+                  type="number"
+                  step="0.1"
+                  value={formData.durationHours}
+                  onChange={(e) => setFormData({ ...formData, durationHours: parseFloat(e.target.value) })}
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label="Starting Point"
+                  value={formData.startLocation}
+                  onChange={(e) => setFormData({ ...formData, startLocation: e.target.value })}
+                  required
+                />
+                <Input
+                  label="End Point"
+                  value={formData.endLocation}
+                  onChange={(e) => setFormData({ ...formData, endLocation: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label="Altitude Gain (m)"
+                  type="number"
+                  value={formData.altitudeGain || ''}
+                  onChange={(e) => setFormData({ ...formData, altitudeGain: parseInt(e.target.value) || undefined })}
+                />
+                <Input
+                  label="Altitude Loss (m)"
+                  type="number"
+                  value={formData.altitudeLoss || ''}
+                  onChange={(e) => setFormData({ ...formData, altitudeLoss: parseInt(e.target.value) || undefined })}
+                />
+              </div>
+
+              <Input
+                label="Temperature"
+                value={formData.temperature || ''}
+                onChange={(e) => setFormData({ ...formData, temperature: e.target.value })}
+                placeholder="e.g., 10-15°C"
+              />
+
+              <Textarea
+                label="Short Description"
+                value={formData.trekShortDescription}
+                onChange={(e) => setFormData({ ...formData, trekShortDescription: e.target.value })}
+                rows={2}
+                required
+              />
+
+              <Textarea
+                label="Full Description"
+                value={formData.trekFullDescription}
+                onChange={(e) => setFormData({ ...formData, trekFullDescription: e.target.value })}
+                rows={4}
+                required
+              />
+
+              <div className="flex gap-2 justify-end">
+                <Button variant="outline" onClick={handleCancel}>
+                  Cancel
+                </Button>
+                <Button onClick={handleSave}>
+                  {editingId ? 'Update' : 'Add Day'}
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      <div className="space-y-4">
+        {itineraries.length === 0 ? (
+          <Card>
+            <CardContent className="py-12 text-center">
+              <p className="text-gray-500">No itinerary days added yet. Click "Add Day" to start.</p>
+            </CardContent>
+          </Card>
+        ) : (
+          itineraries.map((itinerary) => (
+            <Card key={itinerary.id}>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>
+                    Day {itinerary.dayNumber}: {itinerary.startLocation} → {itinerary.endLocation}
+                  </CardTitle>
+                  <div className="flex gap-2">
+                    <Button variant="ghost" size="sm" onClick={() => handleEdit(itinerary)}>
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => handleDelete(itinerary.id)}>
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </Button>
-                    {expandedDays.has(day.day) ? (
-                      <ChevronUp className="w-5 h-5 text-gray-500" />
-                    ) : (
-                      <ChevronDown className="w-5 h-5 text-gray-500" />
-                    )}
                   </div>
                 </div>
-
-                {expandedDays.has(day.day) && (
-                  <div className="p-4 space-y-3">
-                    <p className="text-sm text-gray-700">{day.description}</p>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                      <div>
-                        <span className="text-gray-600">Distance:</span>
-                        <span className="ml-1 font-medium">{day.distance} km</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-600">Altitude:</span>
-                        <span className="ml-1 font-medium">{day.altitude} m</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-600">Accommodation:</span>
-                        <span className="ml-1 font-medium">{day.accommodationType}</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-600">Meals:</span>
-                        <span className="ml-1 font-medium">{day.meals.join(', ')}</span>
-                      </div>
-                    </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-4 gap-4 text-sm mb-4">
+                  <div>
+                    <p className="text-gray-500">Duration</p>
+                    <p className="font-medium">{itinerary.durationHours} hours</p>
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
+                  <div>
+                    <p className="text-gray-500">Altitude Gain</p>
+                    <p className="font-medium">{itinerary.altitudeGain || '-'} m</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">Altitude Loss</p>
+                    <p className="font-medium">{itinerary.altitudeLoss || '-'} m</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">Temperature</p>
+                    <p className="font-medium">{itinerary.temperature || '-'}</p>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-700">{itinerary.trekShortDescription}</p>
+              </CardContent>
+            </Card>
+          ))
         )}
-
-        <div className="border-t pt-6">
-          <h4 className="text-md font-medium text-gray-900 mb-4">Add New Day</h4>
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Day Title"
-                value={newDay.title || ''}
-                onChange={(e) => setNewDay({ ...newDay, title: e.target.value })}
-                placeholder="e.g., Lukla to Phakding"
-              />
-              <Input
-                label="Accommodation Type"
-                value={newDay.accommodationType || ''}
-                onChange={(e) => setNewDay({ ...newDay, accommodationType: e.target.value })}
-                placeholder="e.g., Tea House, Lodge"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Day Description</label>
-              <textarea
-                value={newDay.description || ''}
-                onChange={(e) => setNewDay({ ...newDay, description: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                rows={3}
-                placeholder="Describe the day's journey, what to expect, sights, etc..."
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Distance (km)"
-                type="number"
-                value={newDay.distance?.toString() || ''}
-                onChange={(e) => setNewDay({ ...newDay, distance: parseFloat(e.target.value) || 0 })}
-                placeholder="e.g., 8.5"
-                step="0.1"
-              />
-              <Input
-                label="Altitude (m)"
-                type="number"
-                value={newDay.altitude?.toString() || ''}
-                onChange={(e) => setNewDay({ ...newDay, altitude: parseInt(e.target.value) || 0 })}
-                placeholder="e.g., 2610"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Meals Included</label>
-              <div className="flex gap-4">
-                {mealOptions.map((meal) => (
-                  <Checkbox
-                    key={meal}
-                    label={meal}
-                    checked={(newDay.meals || []).includes(meal)}
-                    onChange={() => handleMealToggle(meal)}
-                  />
-                ))}
-              </div>
-            </div>
-
-            <Button variant="secondary" onClick={handleAddDay}>
-              <Plus className="w-4 h-4 mr-2" />
-              Add Day to Itinerary
-            </Button>
-          </div>
-        </div>
       </div>
     </div>
   );
 };
-
-export default ItinerarySection;

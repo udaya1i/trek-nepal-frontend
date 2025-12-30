@@ -18,8 +18,8 @@ import AdminDashboard from "admin/admin-dashboard";
 import UserManagement from "admin/user-management";
 import SafetyManagement from "admin/safety-management";
 import TrekManagement from "admin/trek-management";
-import AddTrek from "admin/add-trek";
-import ContentModeration from "admin/content-moderation";
+ import ContentModeration from "admin/content-moderation";
+import { AddTrek } from "admin/add-trek/AddTrek";
 
 const Routes: React.FC = () => {
   return (

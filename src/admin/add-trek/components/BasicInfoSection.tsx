@@ -1,52 +1,38 @@
-import React from 'react';
-import Input from 'components/ui/Input';
-import Select from 'components/ui/Select';
-import { Checkbox } from 'components/ui/Checkbox';
-import { TrekFormData } from '../types';
-import { Mountain } from 'lucide-react';
+import Input from "components/ui/Input";
+import { DifficultyLevel, TrekFormData } from "../types";
+import Select from "components/ui/Select";
+import Textarea from "components/ui/Textarea";
 
+ 
 interface BasicInfoSectionProps {
   formData: TrekFormData;
-  onChange: (field: keyof TrekFormData, value: any) => void;
+  onChange: (field: keyof TrekFormData, value: string) => void;
   errors: Record<string, string>;
 }
 
-const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({ formData, onChange, errors }) => {
+export const BasicInfoSection = ({ formData, onChange, errors }: BasicInfoSectionProps) => {
   const difficultyOptions = [
-    { value: 'Easy', label: 'Easy - Suitable for beginners' },
-    { value: 'Moderate', label: 'Moderate - Some trekking experience required' },
-    { value: 'Challenging', label: 'Challenging - Good fitness level needed' },
-    { value: 'Strenuous', label: 'Strenuous - High fitness and experience required' },
-    { value: 'Extreme', label: 'Extreme - Expert level only' },
+    { value: DifficultyLevel.EASY, label: 'Easy' },
+    { value: DifficultyLevel.MODERATE, label: 'Moderate' },
+    { value: DifficultyLevel.CHALLENGING, label: 'Challenging' },
+    { value: DifficultyLevel.STRENUOUS, label: 'Strenuous' },
+    { value: DifficultyLevel.EXTREME, label: 'Extreme' },
   ];
 
-  const regionOptions = [
-    { value: 'Everest', label: 'Everest Region' },
-    { value: 'Annapurna', label: 'Annapurna Region' },
-    { value: 'Langtang', label: 'Langtang Region' },
-    { value: 'Manaslu', label: 'Manaslu Region' },
-    { value: 'Mustang', label: 'Mustang Region' },
-    { value: 'Dolpo', label: 'Dolpo Region' },
-    { value: 'Kanchenjunga', label: 'Kanchenjunga Region' },
+  const provinceOptions = [
+    { value: 'Province 1', label: 'Province 1' },
+    { value: 'Madhesh Province', label: 'Madhesh Province' },
+    { value: 'Bagmati Province', label: 'Bagmati Province' },
+    { value: 'Gandaki Province', label: 'Gandaki Province' },
+    { value: 'Lumbini Province', label: 'Lumbini Province' },
+    { value: 'Karnali Province', label: 'Karnali Province' },
+    { value: 'Sudurpashchim Province', label: 'Sudurpashchim Province' },
   ];
-
-  const seasonOptions = ['Spring', 'Summer', 'Autumn', 'Winter'];
-
-  const handleSeasonToggle = (season: string) => {
-    const currentSeasons = formData.bestSeason || [];
-    const updatedSeasons = currentSeasons.includes(season)
-      ? currentSeasons.filter(s => s !== season)
-      : [...currentSeasons, season];
-    onChange('bestSeason', updatedSeasons);
-  };
 
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-          <Mountain className="w-5 h-5 text-blue-600" />
-          Basic Trek Information
-        </h3>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Basic Information</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="md:col-span-2">
             <Input
@@ -59,69 +45,158 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({ formData, onChange,
             />
           </div>
 
-          <Select
+          <Input
+            label="Subtitle"
+            value={formData.subtitle || ''}
+            onChange={(e) => onChange('subtitle', e.target.value)}
+            placeholder="e.g., Journey to the foot of the world's highest peak"
+          />
+
+          <Input
             label="Region"
-            value={formData.region}
+            value={formData.region || ''}
             onChange={(e) => onChange('region', e.target.value)}
-            options={regionOptions}
-            error={errors.region}
-            required
+            placeholder="e.g., Everest Region"
           />
 
           <Select
             label="Difficulty Level"
-            value={formData.difficulty}
-            onChange={(e) => onChange('difficulty', e.target.value)}
+            value={formData.difficultyLevel}
+            onChange={(e) => onChange('difficultyLevel', e.target.value)}
             options={difficultyOptions}
-            error={errors.difficulty}
+            error={errors.difficultyLevel}
             required
           />
 
           <Input
-            label="Duration (Days)"
-            type="number"
-            value={formData.duration?.toString() || ''}
-            onChange={(e) => onChange('duration', parseInt(e.target.value) || 0)}
-            error={errors.duration}
-            min="1"
+            label="Duration"
+            value={formData.durationDays}
+            onChange={(e) => onChange('durationDays', e.target.value)}
+            error={errors.durationDays}
+            placeholder="e.g., 12-15 days"
             required
           />
 
           <Input
-            label="Maximum Altitude (meters)"
+            label="Maximum Altitude (m)"
             type="number"
-            value={formData.maxAltitude?.toString() || ''}
-            onChange={(e) => onChange('maxAltitude', parseInt(e.target.value) || 0)}
+            value={formData.maxAltitude}
+            onChange={(e) => onChange('maxAltitude', e.target.value)}
             error={errors.maxAltitude}
             placeholder="e.g., 5364"
-            min="0"
             required
           />
 
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Best Season <span className="text-red-500">*</span>
-            </label>
-            <div className="flex flex-wrap gap-4">
-              {seasonOptions.map((season) => (
-                <Checkbox
-                  key={season}
-                  label={season}
-                  checked={(formData.bestSeason || []).includes(season)}
-                  onChange={() => handleSeasonToggle(season)}
-                />
-              ))}
-            </div>
-            {errors.bestSeason && (
-              <p className="mt-1 text-sm text-red-600">{errors.bestSeason}</p>
-            )}
-          </div>
+          <Input
+            label="Total Distance (km)"
+            type="number"
+            step="0.1"
+            value={formData.totalDistance}
+            onChange={(e) => onChange('totalDistance', e.target.value)}
+            error={errors.totalDistance}
+            placeholder="e.g., 130"
+            required
+          />
+
+          <Input
+            label="Highest Point (m)"
+            type="number"
+            value={formData.highestPoint}
+            onChange={(e) => onChange('highestPoint', e.target.value)}
+            error={errors.highestPoint}
+            placeholder="e.g., 5545"
+            required
+          />
+
+          <Input
+            label="Lowest Point (m)"
+            type="number"
+            value={formData.lowestPoint}
+            onChange={(e) => onChange('lowestPoint', e.target.value)}
+            error={errors.lowestPoint}
+            placeholder="e.g., 2800"
+            required
+          />
+
+          <Input
+            label="Starting Point"
+            value={formData.startPoint}
+            onChange={(e) => onChange('startPoint', e.target.value)}
+            error={errors.startPoint}
+            placeholder="e.g., Lukla"
+            required
+          />
+
+          <Input
+            label="End Point"
+            value={formData.endPoint}
+            onChange={(e) => onChange('endPoint', e.target.value)}
+            error={errors.endPoint}
+            placeholder="e.g., Lukla"
+            required
+          />
+
+          <Input
+            label="Best Season"
+            value={formData.bestSeason}
+            onChange={(e) => onChange('bestSeason', e.target.value)}
+            error={errors.bestSeason}
+            placeholder="e.g., March-May, September-November"
+            required
+          />
+
+          <Select
+            label="Province"
+            value={formData.province}
+            onChange={(e) => onChange('province', e.target.value)}
+            options={provinceOptions}
+            error={errors.province}
+            required
+          />
+
+          <Input
+            label="District"
+            value={formData.district}
+            onChange={(e) => onChange('district', e.target.value)}
+            error={errors.district}
+            placeholder="e.g., Solukhumbu"
+            required
+          />
+
+          <Input
+            label="Local Level"
+            value={formData.localLevel}
+            onChange={(e) => onChange('localLevel', e.target.value)}
+            error={errors.localLevel}
+            placeholder="e.g., Khumbu Pasang Lhamu"
+            required
+          />
+
+          <Input
+            label="Total Ascent (m)"
+            type="number"
+            value={formData.totalAscent}
+            onChange={(e) => onChange('totalAscent', e.target.value)}
+            placeholder="Optional"
+          />
+
+          <Input
+            label="Total Descent (m)"
+            type="number"
+            value={formData.totalDescent}
+            onChange={(e) => onChange('totalDescent', e.target.value)}
+            placeholder="Optional"
+          />
 
           <div className="md:col-span-2">
-            <Checkbox
-              label="Permit Required"
-              checked={formData.permitRequired || false}
-              onChange={(e) => onChange('permitRequired', e.target.checked)}
+            <Textarea
+              label="About Trek"
+              value={formData.aboutTrek}
+              onChange={(e) => onChange('aboutTrek', e.target.value)}
+              error={errors.aboutTrek}
+              rows={6}
+              placeholder="Provide a detailed description of the trek..."
+              required
             />
           </div>
         </div>
@@ -129,5 +204,3 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({ formData, onChange,
     </div>
   );
 };
-
-export default BasicInfoSection;
